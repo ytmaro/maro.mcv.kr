@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  
+  <!-- 확대 방지 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>MARO 소개</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* 상단 검은 영역 */
+    .top {
+      height: 60vh; /* 반보다 조금 더 */
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* 하단 흰 영역 */
+    .bottom {
+      height: 100vh;
+      background: white;
+    }
+
+    /* MARO 텍스트 */
+    .title {
+      color: white;
+      font-size: 60px;
+      font-weight: bold;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    /* 설명 텍스트 */
+    .desc {
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 1.5s; /* 조금 늦게 나오게 */
+    }
+
+    /* 서서히 나타나는 효과 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top">
+    <div class="title">MARO</div>
+    <div class="desc">마로에 대해 정보가 궁금하다면 아래로 내려보세요!</div>
+  </div>
+
+  <div class="bottom">
+    <!-- 여기에 내용 추가하면 됨 -->
+  </div>
+
+</body>
+</html>
