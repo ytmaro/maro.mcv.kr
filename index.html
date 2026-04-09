@@ -6,9 +6,9 @@
 <title>MARO</title>
 
 <style>
-body { margin:0; font-family:Arial; }
+body { margin:0; font-family:Arial; scroll-behavior:smooth; }
 
-/* 상단 */
+/* 상단 검정 */
 .top {
   height:60vh;
   background:black;
@@ -16,15 +16,34 @@ body { margin:0; font-family:Arial; }
   flex-direction:column;
   justify-content:center;
   align-items:center;
+  position:relative;
 }
 
+/* 메뉴 */
+.menu {
+  position:absolute;
+  top:20px;
+  left:20px;
+  display:flex;
+  gap:10px;
+}
+
+.menu div {
+  background:#222;
+  color:white;
+  padding:8px 15px;
+  border-radius:20px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* 텍스트 */
 .title {
   color:white;
   font-size:60px;
   opacity:0;
   animation:fadeIn 1.5s forwards;
 }
-
 .desc {
   color:white;
   opacity:0;
@@ -38,62 +57,50 @@ body { margin:0; font-family:Arial; }
   background:linear-gradient(to bottom, black, white);
 }
 
-/* 질문 영역 */
-.ask {
-  padding:100px 20px;
+/* 공지 */
+.notice-section {
+  padding:80px 20px;
   text-align:center;
 }
 
-.ask-title {
-  font-size:28px;
+.notice-title {
+  font-size:30px;
   font-weight:bold;
-  opacity:0;
-  transform:translateY(20px);
-  transition:1s;
 }
 
-.notice {
+.notice-item {
   margin-top:10px;
-  color:black;
-  font-weight:bold;
 }
 
-/* 입력 */
-.box {
-  margin-top:20px;
-  opacity:0;
-  transform:translateY(20px);
-  transition:1s;
+/* 질문 */
+.ask {
+  padding:100px 20px;
+  text-align:center;
 }
 
 input {
   padding:10px;
   margin:5px;
   border-radius:10px;
-  border:1px solid #ccc;
 }
 
 button {
   padding:10px 20px;
   border:none;
   border-radius:20px;
-  cursor:pointer;
   background:black;
   color:white;
+  cursor:pointer;
 }
 
-/* 게시판 */
 .post {
-  margin-top:20px;
-  padding:10px;
   border-bottom:1px solid #ccc;
+  margin-top:10px;
+  padding:10px;
 }
 
-/* 경고 */
 .warning {
   color:red;
-  margin-top:10px;
-  font-weight:bold;
 }
 
 /* 애니메이션 */
@@ -106,93 +113,137 @@ button {
 
 <body>
 
-<div class="top">
+<!-- 상단 -->
+<div class="top" id="intro">
+
+  <div class="menu">
+    <div onclick="go('intro')">INTRO</div>
+    <div onclick="go('notice')">NOTICE</div>
+    <div onclick="go('board')">BOARD</div>
+  </div>
+
   <div class="title">MARO</div>
   <div class="desc">마로에 대해 정보가 궁금하다면 아래로 내려보세요!</div>
 </div>
 
 <div class="fade"></div>
 
-<div class="ask">
-  <div class="ask-title" id="askTitle">마로에게 질문하기</div>
+<!-- 공지 -->
+<div class="notice-section" id="notice">
+  <div class="notice-title">공지</div>
+  <div id="noticeList"></div>
+</div>
 
-  <div class="notice">
-    [ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]
+<!-- 게시판 -->
+<div class="ask" id="board">
+  <h2>마로에게 질문하기</h2>
+
+  <div>
+  [ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]
   </div>
 
-  <div class="box" id="box">
+  <div id="lockMsg"></div>
+
+  <div id="inputArea">
     <input id="name" placeholder="이름">
     <input id="q" placeholder="질문">
     <button onclick="add()">등록</button>
   </div>
 
-  <div id="warning" class="warning"></div>
+  <div class="warning" id="warn"></div>
   <div id="posts"></div>
 </div>
 
 <script>
+/* 데이터 */
 let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+let notices = JSON.parse(localStorage.getItem("notices")||"[]");
+let locked = localStorage.getItem("locked") === "true";
 
-/* 욕 필터 리스트 */
-const badWords = ["씨발","ㅅㅂ","fuck","shit","개새끼","병신"];
+/* SafeBot 강화 */
+const badWords = ["씨발","ㅅㅂ","fuck","shit","병신","개새끼","sex","porn","죽어","살인"];
 
-/* 디스코드 웹훅 */
-const webhook = "https://discord.com/api/webhooks/1484816946074746930/yWR72N83Zvke7hgWa0s8C4lE_A3NYlwgG8gZqQsJDR-eqPuEoY8qq9zX-QuUVW2_WxVm";
-
-function isBad(text){
-  return badWords.some(word => text.toLowerCase().includes(word));
+function isBad(t){
+  t = t.toLowerCase().replace(/\s/g,"");
+  return badWords.some(w => t.includes(w));
 }
 
-function sendWebhook(name, text){
-  fetch(webhook, {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      content: `🚨 악성 댓글 감지\n이름: ${name}\n내용: ${text}`
-    })
-  });
+/* 스크롤 */
+function go(id){
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
+/* 게시판 */
 function add(){
-  let name = document.getElementById("name").value;
-  let q = document.getElementById("q").value;
+  let name = nameInput.value;
+  let q = qInput.value;
 
-  if(!name || !q) return;
-
-  if(isBad(name) || isBad(q)){
-    document.getElementById("warning").innerText =
-    "[SafeBot] 악성 댓글이 감지되었습니다. 경고가 누적될시, 이용 정지가 될 수도 있습니다.";
-
-    sendWebhook(name, q);
+  if(locked){
+    warn.innerText = "질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
     return;
   }
 
-  posts.push({name:name, text:q});
+  if(isBad(name)||isBad(q)){
+    warn.innerText = "[SafeBot] 악성 댓글이 감지되었습니다. 경고가 누적될시, 이용 정지가 될 수도 있습니다.";
+    return;
+  }
+
+  posts.push({name, q});
   localStorage.setItem("posts", JSON.stringify(posts));
   render();
 }
 
+/* 렌더 */
 function render(){
-  let html="";
-  posts.forEach(p=>{
-    html += `<div class="post"><b>${p.name}</b><br>${p.text}</div>`;
-  });
-  document.getElementById("posts").innerHTML = html;
+  postsDiv.innerHTML = posts.map(p =>
+    `<div class="post"><b>${p.name}</b><br>${p.q}</div>`
+  ).join("");
+
+  noticeList.innerHTML = notices.map(n =>
+    `<div class="notice-item">${n}</div>`
+  ).join("");
+
+  if(locked){
+    inputArea.style.display="none";
+    lockMsg.innerText="질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
+  }
 }
 
 render();
 
-/* 스크롤 애니메이션 */
-window.addEventListener("scroll", ()=>{
-  let y = window.scrollY;
+/* 관리자 페이지 */
+if(location.search.includes("admin0816")){
+  document.body.innerHTML = `
+  <h1>관리자 페이지</h1>
 
-  if(y > 200){
-    document.getElementById("askTitle").style.opacity = 1;
-    document.getElementById("askTitle").style.transform = "translateY(0)";
-    document.getElementById("box").style.opacity = 1;
-    document.getElementById("box").style.transform = "translateY(0)";
-  }
-});
+  <h3>공지 추가</h3>
+  <input id="n"><button onclick="addNotice()">추가</button>
+
+  <h3>공지 삭제</h3>
+  <button onclick="clearNotice()">전체 삭제</button>
+
+  <h3>게시판 관리</h3>
+  <button onclick="clearPosts()">게시글 삭제</button>
+  <button onclick="toggleLock()">게시판 잠금/해제</button>
+  `;
+}
+
+function addNotice(){
+  notices.push(n.value);
+  localStorage.setItem("notices", JSON.stringify(notices));
+}
+
+function clearNotice(){
+  localStorage.removeItem("notices");
+}
+
+function clearPosts(){
+  localStorage.removeItem("posts");
+}
+
+function toggleLock(){
+  localStorage.setItem("locked", !(localStorage.getItem("locked")==="true"));
+}
 </script>
 
 </body>
