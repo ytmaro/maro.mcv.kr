@@ -8,7 +8,7 @@
 <style>
 body { margin:0; font-family:Arial; scroll-behavior:smooth; }
 
-/* 상단 검정 */
+/* 상단 */
 .top {
   height:60vh;
   background:black;
@@ -19,7 +19,6 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
   position:relative;
 }
 
-/* 메뉴 */
 .menu {
   position:absolute;
   top:20px;
@@ -37,13 +36,13 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
   font-weight:bold;
 }
 
-/* 텍스트 */
 .title {
   color:white;
   font-size:60px;
   opacity:0;
   animation:fadeIn 1.5s forwards;
 }
+
 .desc {
   color:white;
   opacity:0;
@@ -51,7 +50,6 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
   animation-delay:0.8s;
 }
 
-/* 그라데이션 */
 .fade {
   height:150px;
   background:linear-gradient(to bottom, black, white);
@@ -59,7 +57,7 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
 
 /* 공지 */
 .notice-section {
-  padding:80px 20px;
+  padding:80px;
   text-align:center;
 }
 
@@ -68,13 +66,9 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
   font-weight:bold;
 }
 
-.notice-item {
-  margin-top:10px;
-}
-
-/* 질문 */
+/* 게시판 */
 .ask {
-  padding:100px 20px;
+  padding:100px;
   text-align:center;
 }
 
@@ -82,6 +76,7 @@ input {
   padding:10px;
   margin:5px;
   border-radius:10px;
+  border:1px solid #ccc;
 }
 
 button {
@@ -101,6 +96,30 @@ button {
 
 .warning {
   color:red;
+  margin-top:10px;
+}
+
+/* 관리자 UI */
+.admin {
+  background:#111;
+  color:white;
+  min-height:100vh;
+  padding:30px;
+}
+
+.admin h1 {
+  text-align:center;
+}
+
+.card {
+  background:#222;
+  padding:20px;
+  border-radius:15px;
+  margin-top:20px;
+}
+
+.admin input {
+  width:200px;
 }
 
 /* 애니메이션 */
@@ -113,9 +132,10 @@ button {
 
 <body>
 
+<div id="main">
+
 <!-- 상단 -->
 <div class="top" id="intro">
-
   <div class="menu">
     <div onclick="go('intro')">INTRO</div>
     <div onclick="go('notice')">NOTICE</div>
@@ -138,9 +158,7 @@ button {
 <div class="ask" id="board">
   <h2>마로에게 질문하기</h2>
 
-  <div>
-  [ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]
-  </div>
+  <div>[ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]</div>
 
   <div id="lockMsg"></div>
 
@@ -154,58 +172,65 @@ button {
   <div id="posts"></div>
 </div>
 
+</div>
+
 <script>
-/* 데이터 */
 let posts = JSON.parse(localStorage.getItem("posts")||"[]");
 let notices = JSON.parse(localStorage.getItem("notices")||"[]");
-let locked = localStorage.getItem("locked") === "true";
+let locked = localStorage.getItem("locked")==="true";
 
-/* SafeBot 강화 */
-const badWords = ["씨발","ㅅㅂ","fuck","shit","병신","개새끼","sex","porn","죽어","살인"];
+const badWords = ["씨발","ㅅㅂ","fuck","shit","병신","개새끼","sex","porn","죽어"];
 
 function isBad(t){
   t = t.toLowerCase().replace(/\s/g,"");
   return badWords.some(w => t.includes(w));
 }
 
-/* 스크롤 */
 function go(id){
   document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
-/* 게시판 */
+/* 댓글 추가 */
 function add(){
-  let name = nameInput.value;
-  let q = qInput.value;
+  let name = document.getElementById("name").value;
+  let q = document.getElementById("q").value;
+
+  if(!name || !q){
+    warn.innerText="이름과 질문을 입력하세요";
+    return;
+  }
 
   if(locked){
-    warn.innerText = "질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
+    warn.innerText="질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
     return;
   }
 
   if(isBad(name)||isBad(q)){
-    warn.innerText = "[SafeBot] 악성 댓글이 감지되었습니다. 경고가 누적될시, 이용 정지가 될 수도 있습니다.";
+    warn.innerText="[SafeBot] 악성 댓글이 감지되었습니다.";
     return;
   }
 
-  posts.push({name, q});
+  posts.push({name,q});
   localStorage.setItem("posts", JSON.stringify(posts));
   render();
 }
 
 /* 렌더 */
 function render(){
+  let postsDiv = document.getElementById("posts");
+  let noticeDiv = document.getElementById("noticeList");
+
   postsDiv.innerHTML = posts.map(p =>
     `<div class="post"><b>${p.name}</b><br>${p.q}</div>`
   ).join("");
 
-  noticeList.innerHTML = notices.map(n =>
-    `<div class="notice-item">${n}</div>`
+  noticeDiv.innerHTML = notices.map(n =>
+    `<div>${n}</div>`
   ).join("");
 
   if(locked){
-    inputArea.style.display="none";
-    lockMsg.innerText="질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
+    document.getElementById("inputArea").style.display="none";
+    document.getElementById("lockMsg").innerText="질문추가가 일시정지 되었습니다.";
   }
 }
 
@@ -214,35 +239,53 @@ render();
 /* 관리자 페이지 */
 if(location.search.includes("admin0816")){
   document.body.innerHTML = `
-  <h1>관리자 페이지</h1>
+  <div class="admin">
+    <h1>MARO 관리자</h1>
 
-  <h3>공지 추가</h3>
-  <input id="n"><button onclick="addNotice()">추가</button>
+    <div class="card">
+      <h3>공지 추가</h3>
+      <input id="n"><button onclick="addNotice()">추가</button>
+    </div>
 
-  <h3>공지 삭제</h3>
-  <button onclick="clearNotice()">전체 삭제</button>
+    <div class="card">
+      <h3>공지 삭제</h3>
+      <button onclick="clearNotice()">전체 삭제</button>
+    </div>
 
-  <h3>게시판 관리</h3>
-  <button onclick="clearPosts()">게시글 삭제</button>
-  <button onclick="toggleLock()">게시판 잠금/해제</button>
+    <div class="card">
+      <h3>게시판 관리</h3>
+      <button onclick="clearPosts()">게시글 전체 삭제</button>
+      <button onclick="toggleLock()">게시판 잠금/해제</button>
+    </div>
+
+    <div class="card">
+      <button onclick="location.href='/'">메인으로</button>
+    </div>
+  </div>
   `;
 }
 
 function addNotice(){
-  notices.push(n.value);
+  let n = document.getElementById("n").value;
+  notices.push(n);
   localStorage.setItem("notices", JSON.stringify(notices));
+  alert("추가됨");
 }
 
 function clearNotice(){
   localStorage.removeItem("notices");
+  alert("삭제됨");
 }
 
 function clearPosts(){
   localStorage.removeItem("posts");
+  alert("삭제됨");
 }
 
 function toggleLock(){
-  localStorage.setItem("locked", !(localStorage.getItem("locked")==="true"));
+  let current = localStorage.getItem("locked")==="true";
+  localStorage.setItem("locked", !current);
+  alert("상태 변경됨");
 }
 </script>
 
