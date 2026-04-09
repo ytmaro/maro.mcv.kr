@@ -6,7 +6,7 @@
 <title>MARO</title>
 
 <style>
-body { margin:0; font-family:Arial; scroll-behavior:smooth; }
+body { margin:0; font-family:Arial; background:#f5f5f5; scroll-behavior:smooth; }
 
 /* 상단 */
 .top {
@@ -36,48 +36,39 @@ body { margin:0; font-family:Arial; scroll-behavior:smooth; }
   font-weight:bold;
 }
 
-.title {
-  color:white;
-  font-size:60px;
-  opacity:0;
-  animation:fadeIn 1.5s forwards;
-}
-
-.desc {
-  color:white;
-  opacity:0;
-  animation:fadeIn 1.5s forwards;
-  animation-delay:0.8s;
-}
+.title { color:white; font-size:60px; animation:fadeIn 1.5s forwards; }
+.desc { color:white; animation:fadeIn 1.5s forwards; animation-delay:0.8s; }
 
 .fade {
   height:150px;
   background:linear-gradient(to bottom, black, white);
 }
 
-/* 공지 */
-.notice-section {
-  padding:80px;
-  text-align:center;
+/* 카드 UI */
+.card {
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  margin:20px auto;
+  width:80%;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-.notice-title {
-  font-size:30px;
-  font-weight:bold;
-}
+/* 공지 */
+.notice-title { font-size:30px; font-weight:bold; text-align:center; }
 
 /* 게시판 */
-.ask {
-  padding:100px;
-  text-align:center;
-}
+.ask { padding:50px; text-align:center; }
 
-input {
+input, textarea {
   padding:10px;
   margin:5px;
   border-radius:10px;
   border:1px solid #ccc;
+  width:200px;
 }
+
+textarea { width:300px; height:80px; }
 
 button {
   padding:10px 20px;
@@ -88,18 +79,18 @@ button {
   cursor:pointer;
 }
 
+/* 댓글 */
 .post {
-  border-bottom:1px solid #ccc;
-  margin-top:10px;
-  padding:10px;
-}
-
-.warning {
-  color:red;
+  text-align:left;
   margin-top:10px;
 }
 
-/* 관리자 UI */
+.delete-btn {
+  float:right;
+  background:red;
+}
+
+/* 관리자 */
 .admin {
   background:#111;
   color:white;
@@ -107,25 +98,16 @@ button {
   padding:30px;
 }
 
-.admin h1 {
-  text-align:center;
-}
-
-.card {
+.card-dark {
   background:#222;
   padding:20px;
   border-radius:15px;
   margin-top:20px;
 }
 
-.admin input {
-  width:200px;
-}
-
-/* 애니메이션 */
 @keyframes fadeIn {
   from {opacity:0; transform:translateY(20px);}
-  to {opacity:1; transform:translateY(0);}
+  to {opacity:1;}
 }
 </style>
 </head>
@@ -134,7 +116,6 @@ button {
 
 <div id="main">
 
-<!-- 상단 -->
 <div class="top" id="intro">
   <div class="menu">
     <div onclick="go('intro')">INTRO</div>
@@ -149,7 +130,7 @@ button {
 <div class="fade"></div>
 
 <!-- 공지 -->
-<div class="notice-section" id="notice">
+<div id="notice">
   <div class="notice-title">공지</div>
   <div id="noticeList"></div>
 </div>
@@ -158,17 +139,15 @@ button {
 <div class="ask" id="board">
   <h2>마로에게 질문하기</h2>
 
-  <div>[ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]</div>
-
-  <div id="lockMsg"></div>
+  <div>[ SafeBot 작동중 ]</div>
 
   <div id="inputArea">
     <input id="name" placeholder="이름">
-    <input id="q" placeholder="질문">
+    <textarea id="q" placeholder="질문"></textarea><br>
     <button onclick="add()">등록</button>
   </div>
 
-  <div class="warning" id="warn"></div>
+  <div id="warn"></div>
   <div id="posts"></div>
 </div>
 
@@ -177,36 +156,24 @@ button {
 <script>
 let posts = JSON.parse(localStorage.getItem("posts")||"[]");
 let notices = JSON.parse(localStorage.getItem("notices")||"[]");
-let locked = localStorage.getItem("locked")==="true";
 
-const badWords = ["씨발","ㅅㅂ","fuck","shit","병신","개새끼","sex","porn","죽어"];
+const badWords = ["씨발","ㅅㅂ","fuck","shit","병신","개새끼","죽어"];
 
 function isBad(t){
-  t = t.toLowerCase().replace(/\s/g,"");
-  return badWords.some(w => t.includes(w));
+  return badWords.some(w=>t.toLowerCase().includes(w));
 }
 
 function go(id){
   document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
-/* 댓글 추가 */
+/* 댓글 */
 function add(){
   let name = document.getElementById("name").value;
   let q = document.getElementById("q").value;
 
-  if(!name || !q){
-    warn.innerText="이름과 질문을 입력하세요";
-    return;
-  }
-
-  if(locked){
-    warn.innerText="질문추가가 일시정지 되었습니다. 관리자에게 문의하세요.";
-    return;
-  }
-
   if(isBad(name)||isBad(q)){
-    warn.innerText="[SafeBot] 악성 댓글이 감지되었습니다.";
+    warn.innerText="[SafeBot] 악성 댓글 감지";
     return;
   }
 
@@ -215,77 +182,74 @@ function add(){
   render();
 }
 
+function deletePost(i){
+  posts.splice(i,1);
+  localStorage.setItem("posts", JSON.stringify(posts));
+  render();
+}
+
 /* 렌더 */
 function render(){
-  let postsDiv = document.getElementById("posts");
-  let noticeDiv = document.getElementById("noticeList");
+  document.getElementById("posts").innerHTML =
+    posts.map((p,i)=>`
+      <div class="card post">
+        <button class="delete-btn" onclick="deletePost(${i})">삭제</button>
+        <b>${p.name}</b><br>${p.q}
+      </div>
+    `).join("");
 
-  postsDiv.innerHTML = posts.map(p =>
-    `<div class="post"><b>${p.name}</b><br>${p.q}</div>`
-  ).join("");
-
-  noticeDiv.innerHTML = notices.map(n =>
-    `<div>${n}</div>`
-  ).join("");
-
-  if(locked){
-    document.getElementById("inputArea").style.display="none";
-    document.getElementById("lockMsg").innerText="질문추가가 일시정지 되었습니다.";
-  }
+  document.getElementById("noticeList").innerHTML =
+    notices.map(n=>`
+      <div class="card">
+        <h3>${n.title}</h3>
+        <p>${n.text}</p>
+      </div>
+    `).join("");
 }
 
 render();
 
-/* 관리자 페이지 */
+/* 관리자 */
 if(location.search.includes("admin0816")){
-  document.body.innerHTML = `
+  document.body.innerHTML=`
   <div class="admin">
-    <h1>MARO 관리자</h1>
+    <h1>관리자</h1>
 
-    <div class="card">
+    <div class="card-dark">
       <h3>공지 추가</h3>
-      <input id="n"><button onclick="addNotice()">추가</button>
+      <input id="nt" placeholder="제목"><br>
+      <textarea id="nc" placeholder="내용"></textarea><br>
+      <button onclick="addNotice()">추가</button>
     </div>
 
-    <div class="card">
-      <h3>공지 삭제</h3>
-      <button onclick="clearNotice()">전체 삭제</button>
+    <div class="card-dark">
+      <h3>전체 삭제</h3>
+      <button onclick="clearPosts()">게시글 삭제</button>
+      <button onclick="clearNotice()">공지 삭제</button>
     </div>
 
-    <div class="card">
-      <h3>게시판 관리</h3>
-      <button onclick="clearPosts()">게시글 전체 삭제</button>
-      <button onclick="toggleLock()">게시판 잠금/해제</button>
-    </div>
-
-    <div class="card">
-      <button onclick="location.href='/'">메인으로</button>
+    <div class="card-dark">
+      <button onclick="location.href='/'">메인</button>
     </div>
   </div>
   `;
 }
 
 function addNotice(){
-  let n = document.getElementById("n").value;
-  notices.push(n);
-  localStorage.setItem("notices", JSON.stringify(notices));
-  alert("추가됨");
-}
+  let title = document.getElementById("nt").value;
+  let text = document.getElementById("nc").value;
 
-function clearNotice(){
-  localStorage.removeItem("notices");
-  alert("삭제됨");
+  notices.push({title,text});
+  localStorage.setItem("notices", JSON.stringify(notices));
+  alert("공지 추가됨");
 }
 
 function clearPosts(){
   localStorage.removeItem("posts");
-  alert("삭제됨");
 }
 
-function toggleLock(){
-  let current = localStorage.getItem("locked")==="true";
-  localStorage.setItem("locked", !current);
-  alert("상태 변경됨");
+function clearNotice(){
+  localStorage.removeItem("notices");
 }
 </script>
 
