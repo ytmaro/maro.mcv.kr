@@ -16,24 +16,15 @@ body { margin:0; font-family:Arial; }
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  position:relative;
 }
 
-.login-btn {
-  position:absolute;
-  top:20px;
-  right:20px;
-  color:white;
-  cursor:pointer;
-}
-
-/* 텍스트 */
 .title {
   color:white;
   font-size:60px;
   opacity:0;
   animation:fadeIn 1.5s forwards;
 }
+
 .desc {
   color:white;
   opacity:0;
@@ -47,7 +38,7 @@ body { margin:0; font-family:Arial; }
   background:linear-gradient(to bottom, black, white);
 }
 
-/* 질문 */
+/* 질문 영역 */
 .ask {
   padding:100px 20px;
   text-align:center;
@@ -57,26 +48,38 @@ body { margin:0; font-family:Arial; }
   font-size:28px;
   font-weight:bold;
   opacity:0;
-  animation:fadeIn 1s forwards;
+  transform:translateY(20px);
+  transition:1s;
 }
 
+.notice {
+  margin-top:10px;
+  color:black;
+  font-weight:bold;
+}
+
+/* 입력 */
 .box {
   margin-top:20px;
   opacity:0;
-  animation:fadeIn 1s forwards;
-  animation-delay:0.5s;
+  transform:translateY(20px);
+  transition:1s;
 }
 
 input {
   padding:10px;
-  width:200px;
+  margin:5px;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
 
 button {
   padding:10px 20px;
-  border-radius:20px;
   border:none;
+  border-radius:20px;
   cursor:pointer;
+  background:black;
+  color:white;
 }
 
 /* 게시판 */
@@ -86,9 +89,11 @@ button {
   border-bottom:1px solid #ccc;
 }
 
-.badge {
-  width:18px;
-  vertical-align:middle;
+/* 경고 */
+.warning {
+  color:red;
+  margin-top:10px;
+  font-weight:bold;
 }
 
 /* 애니메이션 */
@@ -102,7 +107,6 @@ button {
 <body>
 
 <div class="top">
-  <div class="login-btn" onclick="goLogin()">로그인</div>
   <div class="title">MARO</div>
   <div class="desc">마로에 대해 정보가 궁금하다면 아래로 내려보세요!</div>
 </div>
@@ -110,63 +114,85 @@ button {
 <div class="fade"></div>
 
 <div class="ask">
-  <div class="ask-title">마로에게 질문하기</div>
+  <div class="ask-title" id="askTitle">마로에게 질문하기</div>
 
-  <div class="box" id="askBox"></div>
+  <div class="notice">
+    [ 이 사이트는 SafeBot이 작동중이므로, 비속어 등 포함한 댓글은 자동 삭제됩니다. ]
+  </div>
 
+  <div class="box" id="box">
+    <input id="name" placeholder="이름">
+    <input id="q" placeholder="질문">
+    <button onclick="add()">등록</button>
+  </div>
+
+  <div id="warning" class="warning"></div>
   <div id="posts"></div>
 </div>
 
 <script>
-let user = localStorage.getItem("user");
 let posts = JSON.parse(localStorage.getItem("posts")||"[]");
-let verified = JSON.parse(localStorage.getItem("verified")||"[]");
 
-function goLogin(){
-  let id = prompt("아이디");
-  let pw = prompt("비번");
+/* 욕 필터 리스트 */
+const badWords = ["씨발","ㅅㅂ","fuck","shit","개새끼","병신"];
 
-  if(id=="maro" && pw=="samzang2013"){
-    localStorage.setItem("user","admin");
-    location.href="admin.html";
-  } else {
-    localStorage.setItem("user", id);
-    alert("로그인됨");
-    location.reload();
-  }
+/* 디스코드 웹훅 */
+const webhook = "https://discord.com/api/webhooks/1484816946074746930/yWR72N83Zvke7hgWa0s8C4lE_A3NYlwgG8gZqQsJDR-eqPuEoY8qq9zX-QuUVW2_WxVm";
+
+function isBad(text){
+  return badWords.some(word => text.toLowerCase().includes(word));
 }
 
-function render(){
-  let box = document.getElementById("askBox");
-
-  if(!user){
-    box.innerHTML = `<button onclick="goLogin()">로그인</button>`;
-  } else {
-    box.innerHTML = `
-      <input id="q" placeholder="질문 입력">
-      <button onclick="add()">등록</button>
-    `;
-  }
-
-  let html="";
-  posts.forEach(p=>{
-    let badge = verified.includes(p.user) ? 
-    `<img class="badge" src="https://lh3.googleusercontent.com/bYIJ8qC96iMlCN8uR-uv9qdShzc30A6HECSrtvNlj16cQDYaByanFeyfcqBhkkpT5Q=h36">` : "";
-
-    html += `<div class="post"><b>${p.user}</b> ${badge}<br>${p.text}</div>`;
+function sendWebhook(name, text){
+  fetch(webhook, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      content: `🚨 악성 댓글 감지\n이름: ${name}\n내용: ${text}`
+    })
   });
-
-  document.getElementById("posts").innerHTML = html;
 }
 
 function add(){
+  let name = document.getElementById("name").value;
   let q = document.getElementById("q").value;
-  posts.push({user:user, text:q});
+
+  if(!name || !q) return;
+
+  if(isBad(name) || isBad(q)){
+    document.getElementById("warning").innerText =
+    "[SafeBot] 악성 댓글이 감지되었습니다. 경고가 누적될시, 이용 정지가 될 수도 있습니다.";
+
+    sendWebhook(name, q);
+    return;
+  }
+
+  posts.push({name:name, text:q});
   localStorage.setItem("posts", JSON.stringify(posts));
   render();
 }
 
+function render(){
+  let html="";
+  posts.forEach(p=>{
+    html += `<div class="post"><b>${p.name}</b><br>${p.text}</div>`;
+  });
+  document.getElementById("posts").innerHTML = html;
+}
+
 render();
+
+/* 스크롤 애니메이션 */
+window.addEventListener("scroll", ()=>{
+  let y = window.scrollY;
+
+  if(y > 200){
+    document.getElementById("askTitle").style.opacity = 1;
+    document.getElementById("askTitle").style.transform = "translateY(0)";
+    document.getElementById("box").style.opacity = 1;
+    document.getElementById("box").style.transform = "translateY(0)";
+  }
+});
 </script>
 
 </body>
