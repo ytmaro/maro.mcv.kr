@@ -1,88 +1,173 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MARO</title>
 
-  <!-- 확대 방지 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+body { margin:0; font-family:Arial; }
 
-  <title>MARO 소개</title>
+/* 상단 */
+.top {
+  height:60vh;
+  background:black;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
-    }
+.login-btn {
+  position:absolute;
+  top:20px;
+  right:20px;
+  color:white;
+  cursor:pointer;
+}
 
-    /* 상단 검은 영역 */
-    .top {
-      height: 60vh;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
+/* 텍스트 */
+.title {
+  color:white;
+  font-size:60px;
+  opacity:0;
+  animation:fadeIn 1.5s forwards;
+}
+.desc {
+  color:white;
+  opacity:0;
+  animation:fadeIn 1.5s forwards;
+  animation-delay:0.8s;
+}
 
-    /* 자연스럽게 이어지는 그라데이션 */
-    .fade {
-      height: 150px;
-      background: linear-gradient(to bottom, black 0%, #222 30%, #aaa 70%, white 100%);
-    }
+/* 그라데이션 */
+.fade {
+  height:150px;
+  background:linear-gradient(to bottom, black, white);
+}
 
-    /* 하단 흰 영역 */
-    .bottom {
-      height: 100vh;
-      background: white;
-    }
+/* 질문 */
+.ask {
+  padding:100px 20px;
+  text-align:center;
+}
 
-    /* MARO 텍스트 */
-    .title {
-      color: white;
-      font-size: 60px;
-      font-weight: bold;
-      opacity: 0;
-      animation: fadeIn 1.5s ease forwards;
-    }
+.ask-title {
+  font-size:28px;
+  font-weight:bold;
+  opacity:0;
+  animation:fadeIn 1s forwards;
+}
 
-    /* 설명 텍스트 */
-    .desc {
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 10px;
-      opacity: 0;
-      animation: fadeIn 1.5s ease forwards;
-      animation-delay: 0.2s; /* 제목 끝날 때 자연스럽게 등장 */
-    }
+.box {
+  margin-top:20px;
+  opacity:0;
+  animation:fadeIn 1s forwards;
+  animation-delay:0.5s;
+}
 
-    /* 애니메이션 */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+input {
+  padding:10px;
+  width:200px;
+}
+
+button {
+  padding:10px 20px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+}
+
+/* 게시판 */
+.post {
+  margin-top:20px;
+  padding:10px;
+  border-bottom:1px solid #ccc;
+}
+
+.badge {
+  width:18px;
+  vertical-align:middle;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+</style>
 </head>
 
 <body>
 
-  <div class="top">
-    <div class="title">MARO</div>
-    <div class="desc">마로에 대해 정보가 궁금하다면 아래로 내려보세요!</div>
-  </div>
+<div class="top">
+  <div class="login-btn" onclick="goLogin()">로그인</div>
+  <div class="title">MARO</div>
+  <div class="desc">마로에 대해 정보가 궁금하다면 아래로 내려보세요!</div>
+</div>
 
-  <div class="fade"></div>
+<div class="fade"></div>
 
-  <div class="bottom">
-    <!-- 여기에 내용 추가 -->
-  </div>
+<div class="ask">
+  <div class="ask-title">마로에게 질문하기</div>
+
+  <div class="box" id="askBox"></div>
+
+  <div id="posts"></div>
+</div>
+
+<script>
+let user = localStorage.getItem("user");
+let posts = JSON.parse(localStorage.getItem("posts")||"[]");
+let verified = JSON.parse(localStorage.getItem("verified")||"[]");
+
+function goLogin(){
+  let id = prompt("아이디");
+  let pw = prompt("비번");
+
+  if(id=="maro" && pw=="samzang2013"){
+    localStorage.setItem("user","admin");
+    location.href="admin.html";
+  } else {
+    localStorage.setItem("user", id);
+    alert("로그인됨");
+    location.reload();
+  }
+}
+
+function render(){
+  let box = document.getElementById("askBox");
+
+  if(!user){
+    box.innerHTML = `<button onclick="goLogin()">로그인</button>`;
+  } else {
+    box.innerHTML = `
+      <input id="q" placeholder="질문 입력">
+      <button onclick="add()">등록</button>
+    `;
+  }
+
+  let html="";
+  posts.forEach(p=>{
+    let badge = verified.includes(p.user) ? 
+    `<img class="badge" src="https://lh3.googleusercontent.com/bYIJ8qC96iMlCN8uR-uv9qdShzc30A6HECSrtvNlj16cQDYaByanFeyfcqBhkkpT5Q=h36">` : "";
+
+    html += `<div class="post"><b>${p.user}</b> ${badge}<br>${p.text}</div>`;
+  });
+
+  document.getElementById("posts").innerHTML = html;
+}
+
+function add(){
+  let q = document.getElementById("q").value;
+  posts.push({user:user, text:q});
+  localStorage.setItem("posts", JSON.stringify(posts));
+  render();
+}
+
+render();
+</script>
 
 </body>
 </html>
