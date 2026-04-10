@@ -2,8 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>로그인 - MARO</title>
+<title>로그인</title>
 
 <style>
 body {
@@ -16,81 +15,54 @@ body {
   height:100vh;
 }
 
-/* 로그인 박스 */
-.login-box {
+.box {
   background:#111;
   padding:40px;
   border-radius:20px;
   width:300px;
   text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* 제목 */
-.title {
-  color:white;
-  font-size:28px;
-  margin-bottom:20px;
-}
-
-/* 입력창 */
 input {
   width:100%;
-  padding:12px;
+  padding:10px;
   margin:10px 0;
   border-radius:10px;
   border:none;
-  outline:none;
 }
 
-/* 버튼 */
 button {
   width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
+  padding:10px;
   border-radius:20px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-/* 로그인 버튼 */
-.login-btn {
+  border:none;
   background:white;
-  color:black;
+  cursor:pointer;
 }
 
-/* 회원가입 */
-.register {
-  margin-top:15px;
+.link {
+  margin-top:10px;
   color:#aaa;
   cursor:pointer;
 }
-.register:hover {
-  color:white;
-}
 
-/* 경고 */
-.warn {
-  color:red;
-  margin-top:10px;
-}
+.warn { color:red; }
 </style>
 </head>
 
 <body>
 
-<div class="login-box">
-  <div class="title">MARO 로그인</div>
+<div class="box">
+  <h2 style="color:white;">로그인</h2>
 
   <input id="id" placeholder="아이디">
   <input id="pw" type="password" placeholder="비밀번호">
 
-  <button class="login-btn" onclick="login()">로그인</button>
+  <button onclick="login()">로그인</button>
 
   <div class="warn" id="warn"></div>
 
-  <div class="register" onclick="goRegister()">회원가입</div>
+  <div class="link" onclick="goRegister()">회원가입</div>
 </div>
 
 <script>
@@ -98,14 +70,19 @@ function login(){
   let id = document.getElementById("id").value;
   let pw = document.getElementById("pw").value;
 
-  if(!id || !pw){
-    document.getElementById("warn").innerText = "아이디와 비밀번호를 입력하세요";
+  let users = JSON.parse(localStorage.getItem("users")||"{}");
+
+  if(!users[id]){
+    warn.innerText = "존재하지 않는 계정";
     return;
   }
 
-  // 현재는 HTML만이라서 간단한 저장 방식
-  localStorage.setItem("user", id);
+  if(users[id] !== pw){
+    warn.innerText = "비밀번호 틀림";
+    return;
+  }
 
+  localStorage.setItem("loginUser", id);
   alert("로그인 성공!");
   location.href = "/";
 }
