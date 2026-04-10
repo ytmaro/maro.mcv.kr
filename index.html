@@ -1,279 +1,114 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MARO</title>
-
-<style>
-body { margin:0; font-family:Arial; background:#f5f5f5; scroll-behavior:smooth; }
-
-/* 상단 */
-.top {
-  height:60vh;
-  background:black;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-}
-
-/* 메뉴 */
-.menu {
-  position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  display:flex;
-  gap:15px;
-}
-.menu div {
-  background:#222;
-  color:white;
-  padding:8px 18px;
-  border-radius:20px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.title { color:white; font-size:60px; }
-.desc { color:white; }
-
-.fade {
-  height:150px;
-  background:linear-gradient(to bottom, black, white);
-}
-
-/* 카드 */
-.card {
-  background:white;
-  border-radius:20px;
-  padding:20px;
-  margin:20px auto;
-  width:80%;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-/* 소개 */
-.intro-section {
-  display:flex;
-  align-items:center;
-  gap:30px;
-}
-
-.profile {
-  width:120px;
-  height:120px;
-  border-radius:50%;
-  border:4px solid #2196f3;
-  object-fit:cover;
-}
-
-/* 게시판 */
-.ask { text-align:center; padding:50px; }
-
-input, textarea {
-  padding:10px;
-  margin:5px;
-  border-radius:10px;
-  border:1px solid #ccc;
-}
-
-textarea { width:300px; height:80px; }
-
-button {
-  padding:10px 20px;
-  border:none;
-  border-radius:20px;
-  background:black;
-  color:white;
-  cursor:pointer;
-}
-
-/* 관리자 */
-.admin {
-  background:#111;
-  color:white;
-  min-height:100vh;
-  padding:30px;
-}
-
-.admin-card {
-  background:#222;
-  padding:20px;
-  border-radius:15px;
-  margin-top:20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Comdots</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 <body>
+<nav class="nav">
+    <ul>
+        <li class="navs"><a href="#intro" class="navv">Introduction</a></li>
+        <li class="navs"><a href="#about" class="navv">About</a></li>
+    </ul>
+</nav>
 
-<div id="main">
+<section id="intro">
+    <h1 class="title"><b><span id="target" class="active"></span></b></h1>
+    <p class="text">꿈을 위해 더 높게 날다</p>
+</section>
 
-<!-- 상단 -->
-<div class="top" id="intro">
-  <div class="menu">
-    <div onclick="go('intro')">INTRO</div>
-    <div onclick="go('notice')">NOTICE</div>
-    <div onclick="go('board')">BOARD</div>
-  </div>
-
-  <h1 class="title">MARO</h1>
-  <div class="desc">마로에 대해 궁금하다면 내려보세요</div>
-</div>
-
-<div class="fade"></div>
-
-<!-- 소개 -->
-<div class="card">
-  <h2>마로는 누구일까요?</h2>
-
-  <div class="intro-section">
-    <img class="profile" src="https://cdn.discordapp.com/attachments/1490215041041956884/1491812519289819207/1.jpg?ex=69d90e2d&is=69d7bcad&hm=9ce3b4ca98cd43a083c25ea7f15142cffdd0466d5bce589110697383dd0b8e51&">
-
-    <div>
-      <h2>마로</h2>
-      <div>본명 : 이**</div>
-      <div>이메일 : ytmaro0813@gmail.com</div>
-      <div>믿음직한 친구들 :</div>
-      <div id="friends"></div>
+<section id="about">
+    <div class="aboutme">
+        <div class="profile">
+            <img src="logos/profile.jpeg" class="profile-picture">
+            <h2>Comdots</h2>
+            <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">JS</span>
+                <span class="tag">HTML/CSS</span>
+            </div>
+            <div class="tags">
+                <span class="tag">SQL</span>
+                <span class="tag">MongoDB</span>
+                <span class="tag">Cassandra</span>
+            </div>
+            <p class="birth">방** <br>201X.01.25</p>
+            <div class="social-icons">
+                <a href="https://discord.com/users/894063950730264586" target="_blank">
+                    <img class="icon discord" src="logos/discord.png"/></a>
+                <a href="https://github.com/comdots1" target="_blank">
+                    <img class="icon github" src="logos/img_1.png"/></a>
+                <a href="/cdn-cgi/l/email-protection#cca1a98cafa3a1a8a3b8bfe2b9a7" target="_blank">
+                    <img class="icon email" src="logos/img_2.png"/></a>
+            </div>
+        </div>
+        <div class="experience">
+            <div class="column">
+                <h3><span style="font-size: 12.5px">Discord</span><br> 관리 경력</h3>
+                <div class="project">
+                    <img src="logos/pvpconnect.png" class="project-icon">
+                    <div class="project-info">
+                        <p class="members">900+ <span class="date">2024.04.11 ~</span></p>
+                        <h4>PVPConnect</h4>
+                        <p class="description">마인크래프트 PVP 서버</p>
+                        <p class="role">Helper</p>
+                    </div>
+                </div>
+                <div class="project">
+                    <img src="logos/codo.png" class="project-icon">
+                    <div class="project-info">
+                        <p class="members">300+ <span class="date">2024.03.20 ~</span></p>
+                        <h4>Codo</h4>
+                        <p class="description">개발자 커뮤니티</p>
+                        <p class="role">Administrator</p>
+                    </div>
+                </div>
+                <div class="project">
+                    <img src="logos/comdots.png" class="project-icon">
+                    <div class="project-info">
+                        <p class="members">66+ <span class="date">~</span></p>
+                        <h4>Comdots</h4>
+                        <p class="description">게임 서버 커뮤니티</p>
+                        <p class="role">Owner</p>
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <h3><span style="font-size: 12.5px">Develop</span><br>프로젝트</h3>
+                <div class="project">
+                    <img src="logos/votes.png" class="project-icon">
+                    <div class="project-info">
+                        <p class="members"><span class="date">1 day</span></p>
+                        <h4>Votes</h4>
+                        <p class="description">학교 투표 시스템</p>
+                        <p class="role">Project Leader</p>
+                    </div>
+                </div>
+                <div class="project">
+                    <img src="logos/clever.png" class="project-icon">
+                    <div class="project-info">
+                        <p class="members"><span class="date">2024.07.20 ~</span></p>
+                        <h4>Clever</h4>
+                        <p class="description">마인크래프트 서버</p>
+                        <p class="role">Project Leader</p>
+                    </div>
+                </div>
+                <div class="project">
+                    <img src="logos/dots.png" class="project-icon comdots">
+                    <div class="project-info">
+                        <p class="members"><span class="date">~</span></p>
+                        <h4>Dots</h4>
+                        <p class="description">디스코드 봇</p>
+                        <p class="role">Project Leader</p>
+                    </div>
+                </div>
     </div>
-  </div>
-</div>
-
-<!-- 공지 -->
-<div id="notice">
-  <div class="card"><h2>공지</h2><div id="noticeList"></div></div>
-</div>
-
-<!-- 게시판 -->
-<div class="ask" id="board">
-  <h2>마로에게 질문하기</h2>
-
-  <input id="name" placeholder="이름">
-  <textarea id="q" placeholder="질문"></textarea><br>
-  <button onclick="add()">등록</button>
-
-  <div id="warn" style="color:red;"></div>
-  <div id="posts"></div>
-</div>
-
-</div>
-
-<script>
-let posts = JSON.parse(localStorage.getItem("posts")||"[]");
-let notices = JSON.parse(localStorage.getItem("notices")||"[]");
-let friends = JSON.parse(localStorage.getItem("friends")||"[]");
-let banned = JSON.parse(localStorage.getItem("banned")||"[]");
-
-function go(id){
-  document.getElementById(id).scrollIntoView({behavior:"smooth"});
-}
-
-/* 금지어 검사 */
-function isBad(text){
-  return banned.some(w => text.toLowerCase().includes(w.toLowerCase()));
-}
-
-/* 댓글 추가 */
-function add(){
-  let n = document.getElementById("name").value;
-  let q = document.getElementById("q").value;
-
-  if(isBad(n)||isBad(q)){
-    setTimeout(()=>{
-      warn.innerText="[SafeBot] 세이프봇이 악성 댓글을 감지했습니다. 누적 경고수가 많아지면 정지 대상이 됩니다.";
-    },1400);
-    return;
-  }
-
-  posts.push({name:n, q:q});
-  localStorage.setItem("posts", JSON.stringify(posts));
-  render();
-}
-
-/* 렌더 */
-function render(){
-  document.getElementById("posts").innerHTML =
-    posts.map(p=>`<div class="card"><b>${p.name}</b><br>${p.q}</div>`).join("");
-
-  document.getElementById("noticeList").innerHTML =
-    notices.map(n=>`<div><b>${n.title}</b><br>${n.text}</div>`).join("");
-
-  document.getElementById("friends").innerHTML =
-    friends.map(f=>`<div>• ${f}</div>`).join("");
-}
-render();
-
-/* 관리자 */
-if(location.search.includes("admin0816")){
-  document.body.innerHTML = `
-  <div class="admin">
-    <h1>관리자 패널</h1>
-
-    <div class="admin-card">
-      <h3>금지어 추가 (한 줄씩)</h3>
-      <textarea id="ban"></textarea><br>
-      <button onclick="addBan()">추가</button>
+        </div>
     </div>
-
-    <div class="admin-card">
-      <h3>공지 추가</h3>
-      <input id="nt"><br>
-      <textarea id="nc"></textarea><br>
-      <button onclick="addNotice()">추가</button>
-    </div>
-
-    <div class="admin-card">
-      <h3>친구 추가</h3>
-      <input id="f"><button onclick="addFriend()">추가</button>
-    </div>
-
-    <div class="admin-card">
-      <h3>댓글 관리</h3>
-      <div id="adminPosts"></div>
-    </div>
-
-    <button onclick="location.href='/'">메인</button>
-  </div>
-  `;
-  renderAdmin();
-}
-
-function addBan(){
-  let lines = document.getElementById("ban").value.split("\\n");
-  banned.push(...lines);
-  localStorage.setItem("banned", JSON.stringify(banned));
-}
-
-function addNotice(){
-  notices.push({title:nt.value, text:nc.value});
-  localStorage.setItem("notices", JSON.stringify(notices));
-}
-
-function addFriend(){
-  friends.push(f.value);
-  localStorage.setItem("friends", JSON.stringify(friends));
-}
-
-function renderAdmin(){
-  document.getElementById("adminPosts").innerHTML =
-    posts.map((p,i)=>`
-      <div class="admin-card">
-        ${p.name} - ${p.q}
-        <button onclick="deletePost(${i})">삭제</button>
-      </div>
-    `).join("");
-}
-
-function deletePost(i){
-  posts.splice(i,1);
-  localStorage.setItem("posts", JSON.stringify(posts));
-  renderAdmin();
-}
-</script>
-
+</section>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
 </body>
 </html>
+
