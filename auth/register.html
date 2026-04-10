@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+
+<style>
+body {
+  margin:0;
+  font-family:Arial;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.box {
+  background:#111;
+  padding:40px;
+  border-radius:20px;
+  width:300px;
+  text-align:center;
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+}
+
+button {
+  width:100%;
+  padding:10px;
+  border-radius:20px;
+  border:none;
+  background:white;
+  cursor:pointer;
+}
+
+.link {
+  margin-top:10px;
+  color:#aaa;
+  cursor:pointer;
+}
+
+.warn { color:red; }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2 style="color:white;">회원가입</h2>
+
+  <input id="id" placeholder="아이디">
+  <input id="pw" type="password" placeholder="비밀번호">
+  <input id="pw2" type="password" placeholder="비밀번호 확인">
+
+  <button onclick="register()">가입하기</button>
+
+  <div class="warn" id="warn"></div>
+
+  <div class="link" onclick="goLogin()">로그인으로</div>
+</div>
+
+<script>
+function register(){
+  let id = document.getElementById("id").value;
+  let pw = document.getElementById("pw").value;
+  let pw2 = document.getElementById("pw2").value;
+
+  let users = JSON.parse(localStorage.getItem("users")||"{}");
+
+  if(!id || !pw){
+    warn.innerText = "모두 입력하세요";
+    return;
+  }
+
+  if(pw !== pw2){
+    warn.innerText = "비밀번호 불일치";
+    return;
+  }
+
+  if(users[id]){
+    warn.innerText = "이미 존재하는 아이디";
+    return;
+  }
+
+  users[id] = pw;
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("회원가입 완료!");
+  location.href = "/auth";
+}
+
+function goLogin(){
+  location.href = "/auth";
+}
+</script>
+
+</body>
+</html>
