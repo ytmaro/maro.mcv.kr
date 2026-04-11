@@ -1,114 +1,168 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>Comdots</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>MARO</title>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to right, black 50%, white 50%);
+    }
+
+    #maro-text {
+      position: absolute;
+      top: 50%;
+      left: 25%;
+      transform: translate(-50%, -50%);
+      font-size: 8rem;
+      font-weight: bold;
+      color: white;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    #scroll-text {
+      position: absolute;
+      top: 70%;
+      left: 25%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: white;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      transition-delay: 1s;
+    }
+
+    .profile-container {
+      display: none;
+      position: absolute;
+      top: 50%;
+      right: 25%;
+      transform: translate(50%, -50%);
+      align-items: center;
+    }
+
+    #profile-pic {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 5px solid darkblue;
+    }
+
+    #name {
+      margin-left: 50px;
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    #name-details {
+      margin-top: 10px;
+      font-size: 1.5rem;
+    }
+
+    .rectangles {
+      display: none;
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .rectangle {
+      width: 300px;
+      height: 150px;
+      border-radius: 20px;
+      border: 2px solid darkblue;
+      margin: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .rectangle img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 20px;
+    }
+
+    .rectangle-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rectangle-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .rectangle-subtitle {
+      font-size: 1rem;
+    }
+
+    #youtube-link {
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+  <script>
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY;
+
+      if (scrollPosition > window.innerHeight / 2) {
+        document.getElementById('profile-container').style.display = 'flex';
+        document.getElementById('rectangles').style.display = 'flex';
+      } else {
+        document.getElementById('profile-container').style.display = 'none';
+        document.getElementById('rectangles').style.display = 'none';
+      }
+    });
+
+    window.onload = () => {
+      document.getElementById('maro-text').style.opacity = 1;
+      document.getElementById('scroll-text').style.opacity = 1;
+    };
+  </script>
 </head>
 <body>
-<nav class="nav">
-    <ul>
-        <li class="navs"><a href="#intro" class="navv">Introduction</a></li>
-        <li class="navs"><a href="#about" class="navv">About</a></li>
-    </ul>
-</nav>
+  <div class="container">
+    <div id="maro-text">MARO</div>
+    <div id="scroll-text">마로에 대해 궁금하다면 스크롤 해보세요!</div>
+  </div>
 
-<section id="intro">
-    <h1 class="title"><b><span id="target" class="active"></span></b></h1>
-    <p class="text">꿈을 위해 더 높게 날다</p>
-</section>
+  <div class="profile-container" id="profile-container">
+    <img src="profile_pic.jpg" alt="프로필 사진" id="profile-pic">
+    <div id="name">마로</div>
+    <div id="name-details">이**</div>
+  </div>
 
-<section id="about">
-    <div class="aboutme">
-        <div class="profile">
-            <img src="logos/profile.jpeg" class="profile-picture">
-            <h2>Comdots</h2>
-            <div class="tags">
-                <span class="tag">Python</span>
-                <span class="tag">JS</span>
-                <span class="tag">HTML/CSS</span>
-            </div>
-            <div class="tags">
-                <span class="tag">SQL</span>
-                <span class="tag">MongoDB</span>
-                <span class="tag">Cassandra</span>
-            </div>
-            <p class="birth">방** <br>201X.01.25</p>
-            <div class="social-icons">
-                <a href="https://discord.com/users/894063950730264586" target="_blank">
-                    <img class="icon discord" src="logos/discord.png"/></a>
-                <a href="https://github.com/comdots1" target="_blank">
-                    <img class="icon github" src="logos/img_1.png"/></a>
-                <a href="/cdn-cgi/l/email-protection#cca1a98cafa3a1a8a3b8bfe2b9a7" target="_blank">
-                    <img class="icon email" src="logos/img_2.png"/></a>
-            </div>
-        </div>
-        <div class="experience">
-            <div class="column">
-                <h3><span style="font-size: 12.5px">Discord</span><br> 관리 경력</h3>
-                <div class="project">
-                    <img src="logos/pvpconnect.png" class="project-icon">
-                    <div class="project-info">
-                        <p class="members">900+ <span class="date">2024.04.11 ~</span></p>
-                        <h4>PVPConnect</h4>
-                        <p class="description">마인크래프트 PVP 서버</p>
-                        <p class="role">Helper</p>
-                    </div>
-                </div>
-                <div class="project">
-                    <img src="logos/codo.png" class="project-icon">
-                    <div class="project-info">
-                        <p class="members">300+ <span class="date">2024.03.20 ~</span></p>
-                        <h4>Codo</h4>
-                        <p class="description">개발자 커뮤니티</p>
-                        <p class="role">Administrator</p>
-                    </div>
-                </div>
-                <div class="project">
-                    <img src="logos/comdots.png" class="project-icon">
-                    <div class="project-info">
-                        <p class="members">66+ <span class="date">~</span></p>
-                        <h4>Comdots</h4>
-                        <p class="description">게임 서버 커뮤니티</p>
-                        <p class="role">Owner</p>
-                    </div>
-                </div>
-            </div>
-            <div class="column">
-                <h3><span style="font-size: 12.5px">Develop</span><br>프로젝트</h3>
-                <div class="project">
-                    <img src="logos/votes.png" class="project-icon">
-                    <div class="project-info">
-                        <p class="members"><span class="date">1 day</span></p>
-                        <h4>Votes</h4>
-                        <p class="description">학교 투표 시스템</p>
-                        <p class="role">Project Leader</p>
-                    </div>
-                </div>
-                <div class="project">
-                    <img src="logos/clever.png" class="project-icon">
-                    <div class="project-info">
-                        <p class="members"><span class="date">2024.07.20 ~</span></p>
-                        <h4>Clever</h4>
-                        <p class="description">마인크래프트 서버</p>
-                        <p class="role">Project Leader</p>
-                    </div>
-                </div>
-                <div class="project">
-                    <img src="logos/dots.png" class="project-icon comdots">
-                    <div class="project-info">
-                        <p class="members"><span class="date">~</span></p>
-                        <h4>Dots</h4>
-                        <p class="description">디스코드 봇</p>
-                        <p class="role">Project Leader</p>
-                    </div>
-                </div>
+  <div class="rectangles" id="rectangles">
+    <div class="rectangle">
+      <img src="youtube_logo.png" alt="유튜브 로고">
+      <div class="rectangle-text">
+        <div class="rectangle-title"><a href="youtube.com/@샤크마로" id="youtube-link">Youtuber</a></div>
+        <div class="rectangle-subtitle">구독자 194명 유튜버</div>
+      </div>
     </div>
-        </div>
+    <div class="rectangle">
+      <img src="coding_icon.png" alt="코딩 아이콘">
+      <div class="rectangle-text">
+        <div class="rectangle-title">HTML / Lua</div>
+        <div class="rectangle-subtitle">html , lua 코딩 1년차</div>
+      </div>
     </div>
-</section>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="script.js"></script>
+    <div class="rectangle">
+      <img src="roblox_logo.png" alt="로블록스 로고">
+      <div class="rectangle-text">
+        <div class="rectangle-title">Rivals</div>
+        <div class="rectangle-subtitle">로블록스 라이벌 전 네메시스</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
-
