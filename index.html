@@ -1,168 +1,231 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>MARO</title>
-  <style>
-    body {
-      margin: 0;
-      overflow-x: hidden;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MARO</title>
 
-    .container {
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(to right, black 50%, white 50%);
-    }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
 
-    #maro-text {
-      position: absolute;
-      top: 50%;
-      left: 25%;
-      transform: translate(-50%, -50%);
-      font-size: 8rem;
-      font-weight: bold;
-      color: white;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
+body {
+    overflow-x: hidden;
+}
 
-    #scroll-text {
-      position: absolute;
-      top: 70%;
-      left: 25%;
-      transform: translate(-50%, -50%);
-      font-size: 2rem;
-      color: white;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-      transition-delay: 1s;
-    }
+/* 첫 화면 */
+.section1 {
+    height: 100vh;
+    background: linear-gradient(to bottom, black 50%, white 50%);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    .profile-container {
-      display: none;
-      position: absolute;
-      top: 50%;
-      right: 25%;
-      transform: translate(50%, -50%);
-      align-items: center;
-    }
+/* 그라데이션 경계 */
+.section1::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to bottom, rgba(0,0,0,1), rgba(255,255,255,1));
+}
 
-    #profile-pic {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: 5px solid darkblue;
-    }
+/* 텍스트 */
+.center-text {
+    text-align: center;
+    z-index: 2;
+}
 
-    #name {
-      margin-left: 50px;
-      font-size: 3rem;
-      font-weight: bold;
-    }
+.title {
+    font-size: 80px;
+    font-weight: bold;
+    color: white;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
 
-    #name-details {
-      margin-top: 10px;
-      font-size: 1.5rem;
-    }
+.subtitle {
+    font-size: 16px;
+    color: white;
+    margin-top: 10px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    animation-delay: 1s;
+}
 
-    .rectangles {
-      display: none;
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-    }
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
 
-    .rectangle {
-      width: 300px;
-      height: 150px;
-      border-radius: 20px;
-      border: 2px solid darkblue;
-      margin: 20px;
-      display: flex;
-      align-items: center;
-    }
+/* 두번째 영역 */
+.section2 {
+    min-height: 100vh;
+    background: white;
+    padding: 50px;
+}
 
-    .rectangle img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      margin: 0 20px;
-    }
+/* 프로필 */
+.profile {
+    display: flex;
+    align-items: center;
+}
 
-    .rectangle-text {
-      display: flex;
-      flex-direction: column;
-    }
+.profile img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid #0055ff;
+}
 
-    .rectangle-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
+.profile-text {
+    margin-left: 20px;
+}
 
-    .rectangle-subtitle {
-      font-size: 1rem;
-    }
+.profile-text h1 {
+    font-size: 40px;
+}
 
-    #youtube-link {
-      color: blue;
-      text-decoration: underline;
-    }
-  </style>
-  <script>
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY;
+.profile-text p {
+    margin-top: 5px;
+}
 
-      if (scrollPosition > window.innerHeight / 2) {
-        document.getElementById('profile-container').style.display = 'flex';
-        document.getElementById('rectangles').style.display = 'flex';
-      } else {
-        document.getElementById('profile-container').style.display = 'none';
-        document.getElementById('rectangles').style.display = 'none';
-      }
-    });
+/* 카드 */
+.card {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
-    window.onload = () => {
-      document.getElementById('maro-text').style.opacity = 1;
-      document.getElementById('scroll-text').style.opacity = 1;
-    };
-  </script>
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+.card-text {
+    margin-left: 15px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.card-sub {
+    font-size: 13px;
+    color: gray;
+}
+
+/* 로딩 화면 */
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-box {
+    background: white;
+    padding: 30px 50px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <div id="maro-text">MARO</div>
-    <div id="scroll-text">마로에 대해 궁금하다면 스크롤 해보세요!</div>
-  </div>
 
-  <div class="profile-container" id="profile-container">
-    <img src="profile_pic.jpg" alt="프로필 사진" id="profile-pic">
-    <div id="name">마로</div>
-    <div id="name-details">이**</div>
-  </div>
+<!-- 첫 화면 -->
+<div class="section1">
+    <div class="center-text">
+        <div class="title">MARO</div>
+        <div class="subtitle">마로에 대해 궁금하다면 스크롤 해보세요!</div>
+    </div>
+</div>
 
-  <div class="rectangles" id="rectangles">
-    <div class="rectangle">
-      <img src="youtube_logo.png" alt="유튜브 로고">
-      <div class="rectangle-text">
-        <div class="rectangle-title"><a href="youtube.com/@샤크마로" id="youtube-link">Youtuber</a></div>
-        <div class="rectangle-subtitle">구독자 194명 유튜버</div>
-      </div>
+<!-- 두번째 -->
+<div class="section2">
+
+    <div class="profile">
+        <img src="https://via.placeholder.com/120">
+        <div class="profile-text">
+            <h1>마로</h1>
+            <p>이름 : 이**</p>
+        </div>
     </div>
-    <div class="rectangle">
-      <img src="coding_icon.png" alt="코딩 아이콘">
-      <div class="rectangle-text">
-        <div class="rectangle-title">HTML / Lua</div>
-        <div class="rectangle-subtitle">html , lua 코딩 1년차</div>
-      </div>
+
+    <!-- 카드 1 -->
+    <div class="card" onclick="goYoutube()">
+        <img src="https://via.placeholder.com/60">
+        <div class="card-text">
+            <div class="card-title underline">Youtuber</div>
+            <div class="card-sub">구독자 194명 유튜버</div>
+        </div>
     </div>
-    <div class="rectangle">
-      <img src="roblox_logo.png" alt="로블록스 로고">
-      <div class="rectangle-text">
-        <div class="rectangle-title">Rivals</div>
-        <div class="rectangle-subtitle">로블록스 라이벌 전 네메시스</div>
-      </div>
+
+    <!-- 카드 2 -->
+    <div class="card">
+        <img src="https://via.placeholder.com/60">
+        <div class="card-text">
+            <div class="card-title">HTML / Lua</div>
+            <div class="card-sub">html , lua 코딩 1년차</div>
+        </div>
     </div>
-  </div>
+
+    <!-- 카드 3 -->
+    <div class="card">
+        <img src="https://via.placeholder.com/60">
+        <div class="card-text">
+            <div class="card-title">Rivals</div>
+            <div class="card-sub">로블록스 라이벌 전 네메시스</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 로딩 -->
+<div class="loading" id="loading">
+    <div class="loading-box">
+        서버에 연결중입니다...
+    </div>
+</div>
+
+<script>
+function goYoutube() {
+    const loading = document.getElementById("loading");
+    loading.style.display = "flex";
+
+    setTimeout(() => {
+        window.location.href = "https://youtube.com/@샤크마로";
+    }, 800);
+}
+</script>
+
 </body>
 </html>
